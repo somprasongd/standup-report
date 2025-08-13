@@ -62,6 +62,15 @@ export default function StandupForm() {
     }
   };
 
+  const handleCancel = () => {
+    // Reset form values
+    setYesterday('');
+    setToday('');
+    setBlockers('');
+    // Close the dialog
+    setOpen(false);
+  };
+
   if (loading) {
     return <div className="bg-white p-6 rounded-lg">Loading...</div>;
   }
@@ -76,7 +85,7 @@ export default function StandupForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-1 bg-white">
+    <div className="bg-white">
       {success && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
           Standup entry submitted successfully!
@@ -99,7 +108,7 @@ export default function StandupForm() {
             id="name"
             value={session?.user?.name || 'Anonymous'}
             disabled
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-900"
           />
         </div>
         
@@ -113,7 +122,7 @@ export default function StandupForm() {
             onChange={(e) => setYesterday(e.target.value)}
             required
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             placeholder="Describe your work from yesterday"
           />
         </div>
@@ -128,7 +137,7 @@ export default function StandupForm() {
             onChange={(e) => setToday(e.target.value)}
             required
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             placeholder="Describe your planned work for today"
           />
         </div>
@@ -142,7 +151,7 @@ export default function StandupForm() {
             value={blockers}
             onChange={(e) => setBlockers(e.target.value)}
             rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
             placeholder="Describe any blockers or challenges (optional)"
           />
         </div>
@@ -151,7 +160,7 @@ export default function StandupForm() {
           <button
             type="button"
             className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={() => setOpen(false)}
+            onClick={handleCancel}
           >
             Cancel
           </button>
