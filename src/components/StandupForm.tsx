@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import MarkdownEditor from '@uiw/react-markdown-editor';
 
 interface StandupFormProps {
   onSuccess?: () => void;
@@ -150,14 +151,18 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
             What did you do yesterday?
           </label>
-          <textarea
-            id="yesterday"
+          <MarkdownEditor
             value={yesterday}
-            onChange={(e) => setYesterday(e.target.value)}
-            required
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="Describe your work from yesterday"
+            onChange={(value) => setYesterday(value)}
+            height={150}
+            className="border border-gray-300 rounded-md overflow-hidden"
+            options={{
+              toolbar: [
+                'bold', 'italic', 'strike', 'hr', '|',
+                'list', 'list', '|',
+                'preview'
+              ]
+            }}
           />
         </div>
         
@@ -165,14 +170,18 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           <label htmlFor="today" className="block text-sm font-medium text-gray-700 mb-1">
             What will you do today?
           </label>
-          <textarea
-            id="today"
+          <MarkdownEditor
             value={today}
-            onChange={(e) => setToday(e.target.value)}
-            required
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="Describe your planned work for today"
+            onChange={(value) => setToday(value)}
+            height={150}
+            className="border border-gray-300 rounded-md overflow-hidden"
+            options={{
+              toolbar: [
+                'bold', 'italic', 'strike', 'hr', '|',
+                'list', 'list', '|',
+                'preview'
+              ]
+            }}
           />
         </div>
         
@@ -180,13 +189,18 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           <label htmlFor="blockers" className="block text-sm font-medium text-gray-700 mb-1">
             Any blockers or challenges?
           </label>
-          <textarea
-            id="blockers"
+          <MarkdownEditor
             value={blockers}
-            onChange={(e) => setBlockers(e.target.value)}
-            rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="Describe any blockers or challenges (optional)"
+            onChange={(value) => setBlockers(value)}
+            height={100}
+            className="border border-gray-300 rounded-md overflow-hidden"
+            options={{
+              toolbar: [
+                'bold', 'italic', 'strike', 'hr', '|',
+                'list', 'list', '|',
+                'preview'
+              ]
+            }}
           />
         </div>
         

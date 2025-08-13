@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { useRouter } from 'next/navigation';
 import { useDialog } from '@/components/ui/dialog-context';
+import MarkdownEditor from '@uiw/react-markdown-editor';
+import MarkdownPreview from '@uiw/react-markdown-preview';
 
 type StandupEntry = {
   id: number;
@@ -240,14 +242,18 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
             <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
               What did you do yesterday?
             </label>
-            <textarea
-              id="yesterday"
+            <MarkdownEditor
               value={yesterday}
-              onChange={(e) => setYesterday(e.target.value)}
-              required
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="Describe your work from yesterday"
+              onChange={(value) => setYesterday(value)}
+              height={150}
+              className="border border-gray-300 rounded-md overflow-hidden"
+              options={{
+                toolbar: [
+                  'bold', 'italic', 'strike', 'hr', '|',
+                  'list', 'list', '|',
+                  'preview'
+                ]
+              }}
             />
           </div>
           
@@ -255,14 +261,18 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
             <label htmlFor="today" className="block text-sm font-medium text-gray-700 mb-1">
               What will you do today?
             </label>
-            <textarea
-              id="today"
+            <MarkdownEditor
               value={today}
-              onChange={(e) => setToday(e.target.value)}
-              required
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="Describe your planned work for today"
+              onChange={(value) => setToday(value)}
+              height={150}
+              className="border border-gray-300 rounded-md overflow-hidden"
+              options={{
+                toolbar: [
+                  'bold', 'italic', 'strike', 'hr', '|',
+                  'list', 'list', '|',
+                  'preview'
+                ]
+              }}
             />
           </div>
           
@@ -270,13 +280,18 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
             <label htmlFor="blockers" className="block text-sm font-medium text-gray-700 mb-1">
               Any blockers or challenges?
             </label>
-            <textarea
-              id="blockers"
+            <MarkdownEditor
               value={blockers}
-              onChange={(e) => setBlockers(e.target.value)}
-              rows={2}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              placeholder="Describe any blockers or challenges (optional)"
+              onChange={(value) => setBlockers(value)}
+              height={100}
+              className="border border-gray-300 rounded-md overflow-hidden"
+              options={{
+                toolbar: [
+                  'bold', 'italic', 'strike', 'hr', '|',
+                  'list', 'list', '|',
+                  'preview'
+                ]
+              }}
             />
           </div>
           
@@ -310,9 +325,9 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {entries.map((entry) => (
-        <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white">
+        <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white flex flex-col h-full">
           <div className="flex justify-between items-start mb-2">
             <div className="flex items-center">
               {entry.user?.image ? (
@@ -328,30 +343,36 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
                   </span>
                 </div>
               )}
-              <h3 className="font-bold text-lg text-gray-900">
+              <h3 className="font-bold text-lg text-gray-900 truncate">
                 {entry.user?.name || entry.name}
               </h3>
             </div>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 whitespace-nowrap">
               {format(parseISO(entry.createdAt), 'h:mm a')}
             </span>
           </div>
           
-          <div className="space-y-3">
+          <div className="space-y-3 flex-grow">
             <div>
               <h4 className="font-medium text-gray-700 text-sm">Yesterday</h4>
-              <p className="text-gray-600 text-sm">{entry.yesterday}</p>
+              <div className="text-gray-600 text-sm max-w-none max-h-24 overflow-y-auto scrollbar-hide">
+                <MarkdownPreview source={entry.yesterday} />
+              </div>
             </div>
             
             <div>
               <h4 className="font-medium text-gray-700 text-sm">Today</h4>
-              <p className="text-gray-600 text-sm">{entry.today}</p>
+              <div className="text-gray-600 text-sm max-w-none max-h-24 overflow-y-auto scrollbar-hide">
+                <MarkdownPreview source={entry.today} />
+              </div>
             </div>
             
             {entry.blockers && (
               <div>
                 <h4 className="font-medium text-gray-700 text-sm">Blockers</h4>
-                <p className="text-gray-600 text-sm">{entry.blockers}</p>
+                <div className="text-gray-600 text-sm max-w-none max-h-24 overflow-y-auto scrollbar-hide">
+                  <MarkdownPreview source={entry.blockers} />
+                </div>
               </div>
             )}
           </div>
