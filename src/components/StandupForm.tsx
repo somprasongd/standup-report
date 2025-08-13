@@ -1,23 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useDialog } from '@/components/ui/dialog-context';
 
-export default function StandupForm() {
+interface StandupFormProps {
+  onSuccess?: () => void;
+}
+
+export default function StandupForm({ onSuccess }: StandupFormProps) {
   const [yesterday, setYesterday] = useState('');
   const [today, setToday] = useState('');
   const [blockers, setBlockers] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [existingEntry, setExistingEntry] = useState<any>(null);
   
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { setOpen } = useDialog();
   
   const loading = status === "loading";
+
+  // Check if user already has an entry for today
+  useEffect(() => {
+    const checkExistingEntry = async () => {
+      if (!session?.user?.id) return;
+      
+      try {
+        const response = await fetch('/api/standup/check');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.entry) {
+            setExistingEntry(data.entry);
+            setYesterday(data.entry.yesterday);
+            setToday(data.entry.today);
+            setBlockers(data.entry.blockers || '');
+          }
+        }
+      } catch (err) {
+        console.error('Error checking existing entry:', err);
+      }
+    };
+    
+    checkExistingEntry();
+  }, [session?.user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +53,11 @@ export default function StandupForm() {
     setSuccess(false);
     
     try {
-      const response = await fetch('/api/standup', {
-        method: 'POST',
+      const url = existingEntry ? `/api/standup/${existingEntry.id}` : '/api/standup';
+      const method = existingEntry ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -38,22 +68,31 @@ export default function StandupForm() {
         }),
       });
       
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error('Failed to submit standup entry');
+        if (response.status === 409) {
+          // User already has an entry, update the form with existing data
+          setExistingEntry(data.entry);
+          setYesterday(data.entry.yesterday);
+          setToday(data.entry.today);
+          setBlockers(data.entry.blockers || '');
+          throw new Error(data.error);
+        }
+        throw new Error(data.error || 'Failed to submit standup entry');
       }
       
-      // Reset form
-      setYesterday('');
-      setToday('');
-      setBlockers('');
+      // Success - close modal and refresh data
       setSuccess(true);
       
-      // Close the dialog after a short delay
+      // Close the dialog after a short delay and trigger refresh
       setTimeout(() => {
-        setOpen(false);
-        // Refresh the page to show the new entry
-        router.refresh();
-      }, 1000);
+        if (onSuccess) {
+          onSuccess();
+        }
+        // Dispatch a custom event to notify the StandupList to refresh
+        window.dispatchEvent(new CustomEvent('standupEntryUpdated'));
+      }, 1500);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
@@ -66,8 +105,11 @@ export default function StandupForm() {
     setYesterday('');
     setToday('');
     setBlockers('');
+    setExistingEntry(null);
     // Close the dialog
-    setOpen(false);
+    if (onSuccess) {
+      onSuccess();
+    }
   };
 
   if (loading) {
@@ -87,7 +129,7 @@ export default function StandupForm() {
     <div className="bg-white">
       {success && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
-          Standup entry submitted successfully!
+          Standup entry {existingEntry ? 'updated' : 'submitted'} successfully!
         </div>
       )}
       
@@ -98,6 +140,12 @@ export default function StandupForm() {
       )}
       
       <form onSubmit={handleSubmit} className="space-y-6">
+        {existingEntry && (
+          <div className="mb-4 p-4 bg-blue-100 text-blue-700 rounded">
+            You already have a standup entry for today. You can edit it below.
+          </div>
+        )}
+        
         <div>
           <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
             What did you do yesterday?
@@ -159,7 +207,8 @@ export default function StandupForm() {
                 : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             }`}
           >
-            {isSubmitting ? 'Submitting...' : 'Submit Standup Entry'}
+            {isSubmitting ? (existingEntry ? 'Updating...' : 'Submitting...') : 
+             (existingEntry ? 'Update Standup Entry' : 'Submit Standup Entry')}
           </button>
         </div>
       </form>
