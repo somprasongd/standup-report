@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import StandupForm from '@/components/StandupForm';
+import { Plus } from "lucide-react";
 
 export function DialogDemo() {
   const [open, setOpen] = useState(false);
@@ -55,8 +56,11 @@ export function DialogDemo() {
 
   if (loading) {
     return (
-      <Button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md whitespace-nowrap" disabled>
-        Loading...
+      <Button 
+        className="fixed bottom-6 right-6 rounded-full p-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg z-10" 
+        disabled
+      >
+        <Plus className="h-6 w-6" />
       </Button>
     );
   }
@@ -67,18 +71,22 @@ export function DialogDemo() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md whitespace-nowrap">
-          + New Standup
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-900">Daily Standup Report</DialogTitle>
-        </DialogHeader>
-        <StandupForm onSuccess={() => setOpen(false)} />
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button 
+            className="fixed bottom-6 right-6 rounded-full p-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg z-10"
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-gray-900">Daily Standup Report</DialogTitle>
+          </DialogHeader>
+          <StandupForm onSuccess={() => setOpen(false)} />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
