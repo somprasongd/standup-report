@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { format, isSameDay, parseISO } from 'date-fns';
 
 type StandupEntry = {
   id: number;
@@ -15,15 +16,21 @@ type StandupEntry = {
   } | null;
 };
 
-export default function StandupListContent() {
+export default function StandupListContent({ selectedDate }: { selectedDate: Date }) {
   const [entries, setEntries] = useState<StandupEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchEntries = async () => {
+      setLoading(true);
+      setError(null);
+      
       try {
-        const response = await fetch('/api/standup');
+        // Format the date for the API request
+        const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+        
+        const response = await fetch(`/api/standup?date=${formattedDate}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch standup entries');
@@ -39,12 +46,7 @@ export default function StandupListContent() {
     };
 
     fetchEntries();
-    
-    // Set up polling to refresh data every 30 seconds
-    const interval = setInterval(fetchEntries, 30000);
-    
-    return () => clearInterval(interval);
-  }, []);
+  }, [selectedDate]);
 
   if (loading) {
     return (
@@ -65,7 +67,7 @@ export default function StandupListContent() {
   if (entries.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">No standup entries yet. Be the first to submit!</p>
+        <p className="text-gray-500">No standup entries for this date.</p>
       </div>
     );
   }
@@ -79,12 +81,7 @@ export default function StandupListContent() {
               {entry.user?.name || entry.name}
             </h3>
             <span className="text-sm text-gray-500">
-              {new Date(entry.createdAt).toLocaleDateString('en-US', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
+              {format(parseISO(entry.createdAt), 'h:mm a')}
             </span>
           </div>
           

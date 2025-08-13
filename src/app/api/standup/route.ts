@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { startOfDay, endOfDay } from 'date-fns';
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,11 +54,27 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Get the date parameter from the query string
+    const { searchParams } = new URL(request.url);
+    const dateParam = searchParams.get('date');
+    
+    // If no date is provided, use today's date
+    const targetDate = dateParam ? new Date(dateParam) : new Date();
+    
+    // Set the start and end of the target day
+    const start = startOfDay(targetDate);
+    const end = endOfDay(targetDate);
+    
     const entries = await prisma.standupEntry.findMany({
+      where: {
+        createdAt: {
+          gte: start,
+          lte: end,
+        },
+      },
       orderBy: {
         createdAt: 'desc',
       },
-      take: 20, // Limit to last 20 entries
       include: {
         user: true,
       }
