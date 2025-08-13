@@ -22,7 +22,13 @@ COPY . .
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+# Install dev dependencies needed for build
+RUN npm install --include=dev
+
+# Generate Prisma client
+RUN npx prisma generate
 
 # Build the application
 RUN npm run build
@@ -57,13 +63,13 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 # set hostname to localhost
-ENV HOSTNAME "0.0.0.0"
+ENV HOSTNAME="0.0.0.0"
 
 # Add health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:$PORT/api/health || exit 1
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
