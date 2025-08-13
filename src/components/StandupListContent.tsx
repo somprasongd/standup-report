@@ -82,7 +82,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
     
     // Check if the user is the owner of the entry
     // NextAuth stores the user ID in session.user.id
-    if (!session?.user?.id || entry.userId !== session.user.id) {
+    if (!session?.user || !('id' in session.user) || entry.userId !== (session.user as any).id) {
       return false;
     }
     
@@ -245,15 +245,8 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
             <MarkdownEditor
               value={yesterday}
               onChange={(value) => setYesterday(value)}
-              height={150}
+              height="150px"
               className="border border-gray-300 rounded-md overflow-hidden"
-              options={{
-                toolbar: [
-                  'bold', 'italic', 'strike', 'hr', '|',
-                  'list', 'list', '|',
-                  'preview'
-                ]
-              }}
             />
           </div>
           
@@ -264,15 +257,8 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
             <MarkdownEditor
               value={today}
               onChange={(value) => setToday(value)}
-              height={150}
+              height="150px"
               className="border border-gray-300 rounded-md overflow-hidden"
-              options={{
-                toolbar: [
-                  'bold', 'italic', 'strike', 'hr', '|',
-                  'list', 'list', '|',
-                  'preview'
-                ]
-              }}
             />
           </div>
           
@@ -283,15 +269,8 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
             <MarkdownEditor
               value={blockers}
               onChange={(value) => setBlockers(value)}
-              height={100}
+              height="100px"
               className="border border-gray-300 rounded-md overflow-hidden"
-              options={{
-                toolbar: [
-                  'bold', 'italic', 'strike', 'hr', '|',
-                  'list', 'list', '|',
-                  'preview'
-                ]
-              }}
             />
           </div>
           

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session || !session.user || !('id' in session.user)) {
       return new Response(
         JSON.stringify({ error: 'You must be logged in to check standup entries' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     // Check if user already has an entry for today
     const existingEntry = await prisma.standupEntry.findFirst({
       where: {
-        userId: session.user?.id,
+        userId: (session.user as any).id,
         createdAt: {
           gte: start,
           lte: end,

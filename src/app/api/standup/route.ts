@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session || !session.user || !('id' in session.user)) {
       return new Response(
         JSON.stringify({ error: 'You must be logged in to submit a standup entry' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         yesterday,
         today,
         blockers: blockers || null,
-        userId: session.user?.id,
+        userId: (session.user as { id: string }).id,
       },
     });
     
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
     });
     
     // Transform the data to match the client expectations
-    const transformedEntries = entries.map(entry => ({
+    const transformedEntries = entries.map((entry: any) => ({
       ...entry,
       name: entry.user?.name || 'Anonymous'
     }));

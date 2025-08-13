@@ -26,7 +26,7 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
   // Check if user already has an entry for today
   useEffect(() => {
     const checkExistingEntry = async () => {
-      if (!session?.user?.id) return;
+      if (!session?.user || !('id' in session.user)) return;
       
       try {
         const response = await fetch('/api/standup/check');
@@ -45,7 +45,7 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
     };
     
     checkExistingEntry();
-  }, [session?.user?.id]);
+  }, [session?.user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,15 +154,8 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           <MarkdownEditor
             value={yesterday}
             onChange={(value) => setYesterday(value)}
-            height={150}
+            height="150px"
             className="border border-gray-300 rounded-md overflow-hidden"
-            options={{
-              toolbar: [
-                'bold', 'italic', 'strike', 'hr', '|',
-                'list', 'list', '|',
-                'preview'
-              ]
-            }}
           />
         </div>
         
@@ -173,15 +166,8 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           <MarkdownEditor
             value={today}
             onChange={(value) => setToday(value)}
-            height={150}
+            height="150px"
             className="border border-gray-300 rounded-md overflow-hidden"
-            options={{
-              toolbar: [
-                'bold', 'italic', 'strike', 'hr', '|',
-                'list', 'list', '|',
-                'preview'
-              ]
-            }}
           />
         </div>
         
@@ -192,15 +178,8 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           <MarkdownEditor
             value={blockers}
             onChange={(value) => setBlockers(value)}
-            height={100}
+            height="100px"
             className="border border-gray-300 rounded-md overflow-hidden"
-            options={{
-              toolbar: [
-                'bold', 'italic', 'strike', 'hr', '|',
-                'list', 'list', '|',
-                'preview'
-              ]
-            }}
           />
         </div>
         

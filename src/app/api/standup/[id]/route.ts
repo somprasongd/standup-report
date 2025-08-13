@@ -7,7 +7,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session || !session.user || !('id' in session.user)) {
       return new Response(
         JSON.stringify({ error: 'You must be logged in to update a standup entry' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
@@ -31,7 +31,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     
     // Check if the entry belongs to the current user
     // NextAuth stores the user ID in session.user.id
-    if (existingEntry.userId !== session.user?.id) {
+    if (existingEntry.userId !== (session.user as { id: string }).id) {
       return new Response(
         JSON.stringify({ error: 'You can only update your own standup entries' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }
@@ -57,7 +57,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         yesterday,
         today,
         blockers: blockers || null,
-        userId: session.user?.id,
+        userId: (session.user as { id: string }).id,
       },
     });
     
@@ -79,7 +79,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
+    if (!session || !session.user || !('id' in session.user)) {
       return new Response(
         JSON.stringify({ error: 'You must be logged in to delete a standup entry' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
@@ -102,7 +102,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     }
     
     // Check if the entry belongs to the current user
-    if (existingEntry.userId !== session.user?.id) {
+    if (existingEntry.userId !== (session.user as { id: string }).id) {
       return new Response(
         JSON.stringify({ error: 'You can only delete your own standup entries' }),
         { status: 403, headers: { 'Content-Type': 'application/json' } }

@@ -22,7 +22,7 @@ export function DialogDemo() {
   // Check if user already has an entry for today
   useEffect(() => {
     const checkExistingEntry = async () => {
-      if (!session?.user?.id) {
+      if (!session?.user || !('id' in session.user)) {
         setLoading(false);
         return;
       }
@@ -52,7 +52,7 @@ export function DialogDemo() {
     return () => {
       window.removeEventListener('standupEntryUpdated', handleStandupEntryUpdated);
     };
-  }, [session?.user?.id]);
+  }, [session?.user]);
 
   if (loading) {
     return (
