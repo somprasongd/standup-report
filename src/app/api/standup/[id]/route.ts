@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     
     const body = await request.json();
     
-    const { name, yesterday, today, blockers } = body;
+    const { yesterday, today, blockers } = body;
     
     // Validate required fields
     if (!yesterday || !today) {
@@ -62,7 +62,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updatedEntry = await prisma.standupEntry.update({
       where: { id: parseInt(id) },
       data: {
-        name: session.user?.name || name,
         yesterday,
         today,
         blockers: blockers || null,

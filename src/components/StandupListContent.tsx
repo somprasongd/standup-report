@@ -24,6 +24,7 @@ type StandupEntry = {
   user?: {
     name: string | null;
     id: string;
+    image: string | null;
   } | null;
 };
 
@@ -109,9 +110,24 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
       {entries.map((entry) => (
         <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-lg text-gray-900">
-              {entry.user?.name || entry.name}
-            </h3>
+            <div className="flex items-center">
+              {entry.user?.image ? (
+                <img 
+                  src={entry.user.image} 
+                  alt={entry.user.name || 'User'} 
+                  className="w-8 h-8 rounded-full mr-2 object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
+                  <span className="text-gray-500 text-xs font-bold">
+                    {entry.user?.name?.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                </div>
+              )}
+              <h3 className="font-bold text-lg text-gray-900">
+                {entry.user?.name || entry.name}
+              </h3>
+            </div>
             <span className="text-sm text-gray-500">
               {format(parseISO(entry.createdAt), 'h:mm a')}
             </span>
@@ -195,7 +211,6 @@ function EditStandupForm({ entry }: { entry: StandupEntry | null }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: session?.user?.name || 'Anonymous',
           yesterday,
           today,
           blockers,
@@ -238,19 +253,6 @@ function EditStandupForm({ entry }: { entry: StandupEntry | null }) {
       )}
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={session?.user?.name || 'Anonymous'}
-            disabled
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-900"
-          />
-        </div>
-        
         <div>
           <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
             What did you do yesterday?

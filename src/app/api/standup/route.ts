@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     
     const body = await request.json();
     
-    const { name, yesterday, today, blockers } = body;
+    const { yesterday, today, blockers } = body;
     
     // Validate required fields
     if (!yesterday || !today) {
@@ -30,7 +30,6 @@ export async function POST(request: NextRequest) {
     // Create new standup entry
     const standupEntry = await prisma.standupEntry.create({
       data: {
-        name: session.user?.name || name,
         yesterday,
         today,
         blockers: blockers || null,
@@ -76,14 +75,20 @@ export async function GET(request: NextRequest) {
         createdAt: 'desc',
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          }
+        },
       }
     });
     
     // Transform the data to match the client expectations
     const transformedEntries = entries.map(entry => ({
       ...entry,
-      name: entry.user?.name || entry.name
+      name: entry.user?.name || 'Anonymous'
     }));
     
     return new Response(

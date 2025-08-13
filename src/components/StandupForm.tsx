@@ -32,7 +32,6 @@ export default function StandupForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: session?.user?.name || 'Anonymous',
           yesterday,
           today,
           blockers,
@@ -99,19 +98,6 @@ export default function StandupForm() {
       )}
       
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={session?.user?.name || 'Anonymous'}
-            disabled
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-100 text-gray-900"
-          />
-        </div>
-        
         <div>
           <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
             What did you do yesterday?

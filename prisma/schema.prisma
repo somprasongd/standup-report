@@ -17,12 +17,11 @@ model StandupEntry {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String
   yesterday String
   today     String
   blockers  String?
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 // NextAuth models
