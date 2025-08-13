@@ -54,6 +54,8 @@ Create a `.env.local` file in the root directory with the following variables:
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
 DATABASE_URL=your_database_url_here
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your_nextauth_secret_here
 ```
 
 ### Running the Application
@@ -79,3 +81,35 @@ To start the production server:
 ```bash
 npm start
 ```
+
+## Docker Deployment
+
+This application includes Docker support for easier deployment.
+
+### Building the Docker Image
+
+```bash
+docker build -t standup-report .
+```
+
+### Running with Docker
+
+```bash
+docker run -p 3000:3000 \
+  -e DATABASE_URL=your_database_url_here \
+  -e GOOGLE_CLIENT_ID=your_google_client_id_here \
+  -e GOOGLE_CLIENT_SECRET=your_google_client_secret_here \
+  -e NEXTAUTH_URL=http://localhost:3000 \
+  -e NEXTAUTH_SECRET=your_nextauth_secret_here \
+  standup-report
+```
+
+### Running with Docker Compose
+
+First, update the `docker-compose.yml` file with your environment variables, then run:
+
+```bash
+docker-compose up -d
+```
+
+The application will be available at `http://localhost:3000`.
