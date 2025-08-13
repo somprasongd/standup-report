@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useDialog } from '@/components/ui/dialog-context';
 
 export default function StandupForm() {
   const [yesterday, setYesterday] = useState('');
@@ -14,6 +15,7 @@ export default function StandupForm() {
   
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { setOpen } = useDialog();
   
   const loading = status === "loading";
 
@@ -47,8 +49,12 @@ export default function StandupForm() {
       setBlockers('');
       setSuccess(true);
       
-      // Refresh the page to show the new entry
-      router.refresh();
+      // Close the dialog after a short delay
+      setTimeout(() => {
+        setOpen(false);
+        // Refresh the page to show the new entry
+        router.refresh();
+      }, 1000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     } finally {
@@ -57,12 +63,12 @@ export default function StandupForm() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="bg-white p-6 rounded-lg">Loading...</div>;
   }
 
   if (!session) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Daily Standup Report</h2>
         <p>Please sign in to submit your standup report.</p>
       </div>
@@ -70,9 +76,7 @@ export default function StandupForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Daily Standup Report</h2>
-      
+    <div className="max-w-2xl mx-auto p-1 bg-white">
       {success && (
         <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
           Standup entry submitted successfully!
@@ -143,17 +147,26 @@ export default function StandupForm() {
           />
         </div>
         
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-md text-white font-medium ${
-            isSubmitting 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-          }`}
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit Standup Entry'}
-        </button>
+        <div className="flex justify-end gap-3 pt-4">
+          <button
+            type="button"
+            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`px-4 py-2 rounded-md text-white font-medium ${
+              isSubmitting 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+            }`}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Standup Entry'}
+          </button>
+        </div>
       </form>
     </div>
   );

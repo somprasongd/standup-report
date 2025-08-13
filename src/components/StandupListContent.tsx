@@ -73,9 +73,9 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
   }
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {entries.map((entry) => (
-        <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+        <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white">
           <div className="flex justify-between items-start mb-2">
             <h3 className="font-bold text-lg text-gray-900">
               {entry.user?.name || entry.name}
@@ -87,19 +87,19 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
           
           <div className="space-y-3">
             <div>
-              <h4 className="font-medium text-gray-700">Yesterday</h4>
-              <p className="text-gray-600">{entry.yesterday}</p>
+              <h4 className="font-medium text-gray-700 text-sm">Yesterday</h4>
+              <p className="text-gray-600 text-sm">{entry.yesterday}</p>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-700">Today</h4>
-              <p className="text-gray-600">{entry.today}</p>
+              <h4 className="font-medium text-gray-700 text-sm">Today</h4>
+              <p className="text-gray-600 text-sm">{entry.today}</p>
             </div>
             
             {entry.blockers && (
               <div>
-                <h4 className="font-medium text-gray-700">Blockers</h4>
-                <p className="text-gray-600">{entry.blockers}</p>
+                <h4 className="font-medium text-gray-700 text-sm">Blockers</h4>
+                <p className="text-gray-600 text-sm">{entry.blockers}</p>
               </div>
             )}
           </div>
