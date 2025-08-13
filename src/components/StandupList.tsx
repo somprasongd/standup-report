@@ -1,11 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, parseISO, isToday, isYesterday } from "date-fns";
 import StandupListContent from "./StandupListContent";
 
 export default function StandupList() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [refreshFlag, setRefreshFlag] = useState(false);
+
+  // Function to trigger refresh
+  const triggerRefresh = () => {
+    setRefreshFlag(prev => !prev);
+  };
+
+  useEffect(() => {
+    // Listen for the custom event to trigger refresh
+    const handleStandupEntryUpdated = () => {
+      triggerRefresh();
+    };
+    
+    window.addEventListener('standupEntryUpdated', handleStandupEntryUpdated);
+    
+    return () => {
+      window.removeEventListener('standupEntryUpdated', handleStandupEntryUpdated);
+    };
+  }, []);
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(new Date(e.target.value));
@@ -44,7 +63,7 @@ export default function StandupList() {
           {formatDateLabel(selectedDate)}
         </h3>
       </div>
-      <StandupListContent selectedDate={selectedDate} />
+      <StandupListContent selectedDate={selectedDate} key={`${selectedDate.getTime()}-${refreshFlag}`} />
     </div>
   );
 }

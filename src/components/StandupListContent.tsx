@@ -10,7 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { useRouter } from 'next/navigation';
+import { useDialog } from '@/components/ui/dialog-context';
 
 type StandupEntry = {
   id: number;
@@ -33,7 +36,14 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingEntry, setEditingEntry] = useState<StandupEntry | null>(null);
+  const [refreshFlag, setRefreshFlag] = useState(false);
   const { data: session } = useSession();
+  const router = useRouter();
+
+  // Function to trigger refresh
+  const triggerRefresh = () => {
+    setRefreshFlag(prev => !prev);
+  };
 
   useEffect(() => {
     const fetchEntries = async () => {
@@ -60,7 +70,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
     };
 
     fetchEntries();
-  }, [selectedDate]);
+  }, [selectedDate, refreshFlag]);
 
   const canEditEntry = (entry: StandupEntry) => {
     // Check if it's today's entry
@@ -101,6 +111,200 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
     return (
       <div className="text-center py-8">
         <p className="text-gray-500">No standup entries for this date.</p>
+      </div>
+    );
+  }
+
+  // Define the EditStandupForm component inside StandupListContent
+  function EditStandupForm({ 
+    entry, 
+    onDelete, 
+    onUpdate 
+  }: { 
+    entry: StandupEntry | null, 
+    onDelete: () => void, 
+    onUpdate: () => void 
+  }) {
+    const [yesterday, setYesterday] = useState(entry?.yesterday || '');
+    const [today, setToday] = useState(entry?.today || '');
+    const [blockers, setBlockers] = useState(entry?.blockers || '');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
+    
+    const { data: session } = useSession();
+    const { setOpen } = useDialog();
+
+    useEffect(() => {
+      if (entry) {
+        setYesterday(entry.yesterday);
+        setToday(entry.today);
+        setBlockers(entry.blockers || '');
+      }
+    }, [entry]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setIsSubmitting(true);
+      setError(null);
+      setSuccess(false);
+      
+      try {
+        const response = await fetch(`/api/standup/${entry?.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            yesterday,
+            today,
+            blockers,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to update standup entry');
+        }
+        
+        setSuccess(true);
+        
+        // Close the dialog after a short delay
+        setTimeout(() => {
+          setOpen(false);
+          // Notify parent to refresh data
+          onUpdate();
+          // Dispatch a custom event to notify other components
+          window.dispatchEvent(new CustomEvent('standupEntryUpdated'));
+        }, 1500);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    const handleDelete = async () => {
+      if (!entry) return;
+      
+      const confirmDelete = window.confirm("Are you sure you want to delete this standup entry? This action cannot be undone.");
+      if (!confirmDelete) return;
+      
+      setIsDeleting(true);
+      setError(null);
+      
+      try {
+        const response = await fetch(`/api/standup/${entry.id}`, {
+          method: 'DELETE',
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to delete standup entry');
+        }
+        
+        // Close the dialog
+        setOpen(false);
+        
+        // Notify parent to refresh data
+        onDelete();
+        
+        // Dispatch a custom event to notify other components
+        window.dispatchEvent(new CustomEvent('standupEntryUpdated'));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      } finally {
+        setIsDeleting(false);
+      }
+    };
+
+    if (!entry) {
+      return <div>Loading...</div>;
+    }
+
+    return (
+      <div className="bg-white">
+        {success && (
+          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
+            Standup entry updated successfully!
+          </div>
+        )}
+        
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
+            Error: {error}
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
+              What did you do yesterday?
+            </label>
+            <textarea
+              id="yesterday"
+              value={yesterday}
+              onChange={(e) => setYesterday(e.target.value)}
+              required
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              placeholder="Describe your work from yesterday"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="today" className="block text-sm font-medium text-gray-700 mb-1">
+              What will you do today?
+            </label>
+            <textarea
+              id="today"
+              value={today}
+              onChange={(e) => setToday(e.target.value)}
+              required
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              placeholder="Describe your planned work for today"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="blockers" className="block text-sm font-medium text-gray-700 mb-1">
+              Any blockers or challenges?
+            </label>
+            <textarea
+              id="blockers"
+              value={blockers}
+              onChange={(e) => setBlockers(e.target.value)}
+              rows={2}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+              placeholder="Describe any blockers or challenges (optional)"
+            />
+          </div>
+          
+          <DialogFooter className="gap-2 sm:gap-0 sm:justify-between">
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="px-4 py-2 font-bold text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Entry'}
+            </Button>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`px-4 py-2 rounded-md text-white font-medium ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                }`}
+              >
+                {isSubmitting ? 'Updating...' : 'Update Standup Entry'}
+              </button>
+            </div>
+          </DialogFooter>
+        </form>
       </div>
     );
   }
@@ -169,148 +373,17 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
                   <DialogHeader>
                     <DialogTitle className="text-2xl font-bold text-gray-900">Edit Standup Report</DialogTitle>
                   </DialogHeader>
-                  <EditStandupForm entry={editingEntry} />
+                  <EditStandupForm 
+                    entry={editingEntry} 
+                    onDelete={triggerRefresh} 
+                    onUpdate={triggerRefresh} 
+                  />
                 </DialogContent>
               </Dialog>
             </div>
           )}
         </div>
       ))}
-    </div>
-  );
-}
-
-function EditStandupForm({ entry }: { entry: StandupEntry | null }) {
-  const [yesterday, setYesterday] = useState(entry?.yesterday || '');
-  const [today, setToday] = useState(entry?.today || '');
-  const [blockers, setBlockers] = useState(entry?.blockers || '');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (entry) {
-      setYesterday(entry.yesterday);
-      setToday(entry.today);
-      setBlockers(entry.blockers || '');
-    }
-  }, [entry]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-    setSuccess(false);
-    
-    try {
-      const response = await fetch(`/api/standup/${entry?.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          yesterday,
-          today,
-          blockers,
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to update standup entry');
-      }
-      
-      setSuccess(true);
-      
-      // Reload the page to show updated entries
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  if (!entry) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div className="bg-white">
-      {success && (
-        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
-          Standup entry updated successfully!
-        </div>
-      )}
-      
-      {error && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
-          Error: {error}
-        </div>
-      )}
-      
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
-            What did you do yesterday?
-          </label>
-          <textarea
-            id="yesterday"
-            value={yesterday}
-            onChange={(e) => setYesterday(e.target.value)}
-            required
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="Describe your work from yesterday"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="today" className="block text-sm font-medium text-gray-700 mb-1">
-            What will you do today?
-          </label>
-          <textarea
-            id="today"
-            value={today}
-            onChange={(e) => setToday(e.target.value)}
-            required
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="Describe your planned work for today"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="blockers" className="block text-sm font-medium text-gray-700 mb-1">
-            Any blockers or challenges?
-          </label>
-          <textarea
-            id="blockers"
-            value={blockers}
-            onChange={(e) => setBlockers(e.target.value)}
-            rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="Describe any blockers or challenges (optional)"
-          />
-        </div>
-        
-        <div className="flex justify-end gap-3 pt-4">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`px-4 py-2 rounded-md text-white font-medium ${
-              isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-            }`}
-          >
-            {isSubmitting ? 'Updating...' : 'Update Standup Entry'}
-          </button>
-        </div>
-      </form>
     </div>
   );
 }
