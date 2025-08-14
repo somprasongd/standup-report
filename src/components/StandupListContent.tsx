@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useDialog } from '@/components/ui/dialog-context';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import { Edit3, Clock, User } from 'lucide-react';
 
 type StandupEntry = {
   id: number;
@@ -95,24 +96,43 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
 
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">Loading standup entries...</p>
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+        <p className="mt-4 text-foreground/70">Loading standup entries...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500">Error: {error}</p>
+      <div className="text-center py-12">
+        <div className="mx-auto w-12 h-12 rounded-full bg-error/10 flex items-center justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <p className="text-error font-medium">Error: {error}</p>
+        <Button 
+          variant="outline" 
+          className="mt-4" 
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </Button>
       </div>
     );
   }
 
   if (entries.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">No standup entries for this date.</p>
+      <div className="text-center py-12">
+        <div className="mx-auto w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-medium text-foreground mb-1">No standup entries</h3>
+        <p className="text-foreground/70 mb-4">No team members have submitted standup reports for this date.</p>
       </div>
     );
   }
@@ -224,78 +244,80 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
     }
 
     return (
-      <div className="bg-white">
+      <div className="bg-background">
         {success && (
-          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
+          <div className="mb-4 p-4 bg-success/10 text-success rounded-md border border-success/20">
             Standup entry updated successfully!
           </div>
         )}
         
         {error && (
-          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
+          <div className="mb-4 p-4 bg-error/10 text-error rounded-md border border-error/20">
             Error: {error}
           </div>
         )}
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="yesterday" className="block text-sm font-medium text-foreground/80 mb-2 flex items-center gap-1">
+              <Clock className="h-4 w-4" />
               What did you do yesterday?
             </label>
             <MarkdownEditor
               value={yesterday}
               onChange={(value) => setYesterday(value)}
               height="150px"
-              className="border border-gray-300 rounded-md overflow-hidden"
+              className="border border-border rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary"
             />
           </div>
           
           <div>
-            <label htmlFor="today" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="today" className="block text-sm font-medium text-foreground/80 mb-2 flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               What will you do today?
             </label>
             <MarkdownEditor
               value={today}
               onChange={(value) => setToday(value)}
               height="150px"
-              className="border border-gray-300 rounded-md overflow-hidden"
+              className="border border-border rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary"
             />
           </div>
           
           <div>
-            <label htmlFor="blockers" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="blockers" className="block text-sm font-medium text-foreground/80 mb-2 flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
               Any blockers or challenges?
             </label>
             <MarkdownEditor
               value={blockers}
               onChange={(value) => setBlockers(value)}
               height="100px"
-              className="border border-gray-300 rounded-md overflow-hidden"
+              className="border border-border rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary"
             />
           </div>
           
-          <DialogFooter className="gap-2 sm:gap-0 sm:justify-between">
+          <DialogFooter className="gap-2 sm:gap-0 sm:justify-between pt-4 border-t border-border">
             <Button
               type="button"
               variant="destructive"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="px-4 py-2 font-bold text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
             >
               {isDeleting ? 'Deleting...' : 'Delete Entry'}
             </Button>
             <div className="flex gap-2">
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-4 py-2 rounded-md text-white font-medium ${
-                  isSubmitting 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                }`}
+                className="btn btn-primary"
               >
                 {isSubmitting ? 'Updating...' : 'Update Standup Entry'}
-              </button>
+              </Button>
             </div>
           </DialogFooter>
         </form>
@@ -304,74 +326,97 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {entries.map((entry) => (
-        <div key={entry.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white flex flex-col h-full">
-          <div className="flex justify-between items-start mb-2">
+        <div key={entry.id} className="card p-5 flex flex-col h-full">
+          <div className="flex justify-between items-start mb-3">
             <div className="flex items-center">
               {entry.user?.image ? (
                 <img 
                   src={entry.user.image} 
                   alt={entry.user.name || 'User'} 
-                  className="w-8 h-8 rounded-full mr-2 object-cover"
+                  className="w-10 h-10 rounded-full mr-3 object-cover"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-200 mr-2 flex items-center justify-center">
-                  <span className="text-gray-500 text-xs font-bold">
-                    {entry.user?.name?.charAt(0).toUpperCase() || 'U'}
-                  </span>
+                <div className="w-10 h-10 rounded-full bg-secondary mr-3 flex items-center justify-center">
+                  <User className="h-5 w-5 text-foreground/70" />
                 </div>
               )}
-              <h3 className="font-bold text-lg text-gray-900 truncate">
-                {entry.user?.name || entry.name}
-              </h3>
+              <div>
+                <h3 className="font-bold text-foreground truncate">
+                  {entry.user?.name || entry.name}
+                </h3>
+                <p className="text-xs text-foreground/60">
+                  {format(parseISO(entry.createdAt), 'h:mm a')}
+                </p>
+              </div>
             </div>
-            <span className="text-sm text-gray-500 whitespace-nowrap">
-              {format(parseISO(entry.createdAt), 'h:mm a')}
-            </span>
           </div>
           
-          <div className="space-y-3 flex-grow">
+          <div className="space-y-4 flex-grow">
             <div>
-              <h4 className="font-medium text-gray-700 text-sm">Yesterday</h4>
-              <div className="text-gray-600 text-sm max-w-none max-h-24 overflow-y-auto scrollbar-hide">
-                <MarkdownPreview source={entry.yesterday} />
+              <h4 className="font-medium text-foreground/80 text-sm mb-1 flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                Yesterday
+              </h4>
+              <div className="text-foreground/90 text-sm max-w-none">
+                <MarkdownPreview 
+                  source={entry.yesterday} 
+                  className="w-md-editor-preview"
+                />
               </div>
             </div>
             
             <div>
-              <h4 className="font-medium text-gray-700 text-sm">Today</h4>
-              <div className="text-gray-600 text-sm max-w-none max-h-24 overflow-y-auto scrollbar-hide">
-                <MarkdownPreview source={entry.today} />
+              <h4 className="font-medium text-foreground/80 text-sm mb-1 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Today
+              </h4>
+              <div className="text-foreground/90 text-sm max-w-none">
+                <MarkdownPreview 
+                  source={entry.today} 
+                  className="w-md-editor-preview"
+                />
               </div>
             </div>
             
             {entry.blockers && (
               <div>
-                <h4 className="font-medium text-gray-700 text-sm">Blockers</h4>
-                <div className="text-gray-600 text-sm max-w-none max-h-24 overflow-y-auto scrollbar-hide">
-                  <MarkdownPreview source={entry.blockers} />
+                <h4 className="font-medium text-foreground/80 text-sm mb-1 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Blockers
+                </h4>
+                <div className="text-foreground/90 text-sm max-w-none">
+                  <MarkdownPreview 
+                    source={entry.blockers} 
+                    className="w-md-editor-preview"
+                  />
                 </div>
               </div>
             )}
           </div>
           
           {canEditEntry(entry) && (
-            <div className="mt-4 pt-3 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-border">
               <Dialog>
                 <DialogTrigger asChild>
                   <Button 
                     variant="outline" 
                     size="sm" 
                     onClick={() => handleEdit(entry)}
-                    className="text-xs"
+                    className="gap-1 text-xs"
                   >
+                    <Edit3 className="h-3 w-3" />
                     Edit
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl font-bold text-gray-900">Edit Standup Report</DialogTitle>
+                    <DialogTitle className="text-2xl font-bold text-foreground">Edit Standup Report</DialogTitle>
                   </DialogHeader>
                   <EditStandupForm 
                     entry={editingEntry} 

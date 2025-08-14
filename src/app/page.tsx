@@ -12,9 +12,18 @@ export default async function Home() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
+    <div className="min-h-screen bg-background py-8 sm:py-12">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            Team Standup Reports
+          </h1>
+          <p className="text-foreground/70 max-w-2xl mx-auto">
+            Share your daily progress, plans, and blockers with your team
+          </p>
+        </div>
+        
+        <div className="flex justify-center mb-8">
           <DialogDemo />
         </div>
         

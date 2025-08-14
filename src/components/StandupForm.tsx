@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import MarkdownEditor from '@uiw/react-markdown-editor';
+import { Button } from "@/components/ui/button";
+import { Clock, Calendar, AlertCircle } from 'lucide-react';
 
 interface StandupFormProps {
   onSuccess?: () => void;
@@ -114,95 +116,112 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
   };
 
   if (loading) {
-    return <div className="bg-white p-6 rounded-lg">Loading...</div>;
+    return (
+      <div className="bg-background p-6 rounded-lg">
+        <div className="animate-pulse space-y-4">
+          <div className="h-4 bg-secondary rounded w-3/4"></div>
+          <div className="h-10 bg-secondary rounded"></div>
+          <div className="h-4 bg-secondary rounded w-1/2"></div>
+          <div className="h-10 bg-secondary rounded"></div>
+        </div>
+      </div>
+    );
   }
 
   if (!session) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Daily Standup Report</h2>
-        <p>Please sign in to submit your standup report.</p>
+      <div className="max-w-2xl mx-auto p-6 bg-background rounded-lg">
+        <h2 className="text-2xl font-bold mb-6 text-foreground">Daily Standup Report</h2>
+        <p className="text-foreground/80">Please sign in to submit your standup report.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       {success && (
-        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
+        <div className="mb-4 p-4 bg-success/10 text-success rounded-md border border-success/20 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           Standup entry {existingEntry ? 'updated' : 'submitted'} successfully!
         </div>
       )}
       
       {error && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
+        <div className="mb-4 p-4 bg-error/10 text-error rounded-md border border-error/20 flex items-center gap-2">
+          <AlertCircle className="h-5 w-5" />
           Error: {error}
         </div>
       )}
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {existingEntry && (
-          <div className="mb-4 p-4 bg-blue-100 text-blue-700 rounded">
+          <div className="mb-4 p-4 bg-primary/10 text-primary rounded-md border border-primary/20 flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
             You already have a standup entry for today. You can edit it below.
           </div>
         )}
         
         <div>
-          <label htmlFor="yesterday" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="yesterday" className="block text-sm font-medium text-foreground/80 mb-2 flex items-center gap-1">
+            <Clock className="h-4 w-4" />
             What did you do yesterday?
           </label>
           <MarkdownEditor
             value={yesterday}
             onChange={(value) => setYesterday(value)}
             height="150px"
-            className="border border-gray-300 rounded-md overflow-hidden"
+            className="border border-border rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-background"
           />
         </div>
         
         <div>
-          <label htmlFor="today" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="today" className="block text-sm font-medium text-foreground/80 mb-2 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
             What will you do today?
           </label>
           <MarkdownEditor
             value={today}
             onChange={(value) => setToday(value)}
             height="150px"
-            className="border border-gray-300 rounded-md overflow-hidden"
+            className="border border-border rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-background"
           />
         </div>
         
         <div>
-          <label htmlFor="blockers" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="blockers" className="block text-sm font-medium text-foreground/80 mb-2 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
             Any blockers or challenges?
           </label>
           <MarkdownEditor
             value={blockers}
             onChange={(value) => setBlockers(value)}
             height="100px"
-            className="border border-gray-300 rounded-md overflow-hidden"
+            className="border border-border rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:border-primary bg-background"
           />
         </div>
         
-        <div className="flex justify-end gap-3 pt-4">
-          <button
+        <div className="flex justify-end gap-3 pt-4 border-t border-border">
+          <Button
             type="button"
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            variant="outline"
             onClick={handleCancel}
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={isSubmitting}
-            className={`px-4 py-2 rounded-md text-white font-medium ${
-              isSubmitting 
-                ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-            }`}
+            className="btn btn-primary"
           >
             {isSubmitting ? (existingEntry ? 'Updating...' : 'Submitting...') : 
              (existingEntry ? 'Update Standup Entry' : 'Submit Standup Entry')}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

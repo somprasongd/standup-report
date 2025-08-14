@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import StandupForm from '@/components/StandupForm';
-import { Plus } from "lucide-react";
+import { Plus, CalendarCheck } from "lucide-react";
 
 export function DialogDemo() {
   const [open, setOpen] = useState(false);
@@ -57,7 +57,7 @@ export function DialogDemo() {
   if (loading) {
     return (
       <Button 
-        className="fixed bottom-6 right-6 rounded-full p-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg z-10" 
+        className="fixed bottom-6 right-6 rounded-full p-4 btn btn-primary shadow-lg z-10" 
         disabled
       >
         <Plus className="h-6 w-6" />
@@ -65,9 +65,27 @@ export function DialogDemo() {
     );
   }
 
-  // Hide the button if user already has an entry for today
+  // Show a different button if user already has an entry for today
   if (hasEntry) {
-    return null;
+    return (
+      <div className="fixed bottom-6 right-6 z-10">
+        <Button 
+          className="rounded-full p-4 btn btn-secondary shadow-lg gap-2"
+          onClick={() => setOpen(true)}
+        >
+          <CalendarCheck className="h-6 w-6" />
+          <span className="hidden sm:inline">Edit Today's Entry</span>
+        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-foreground">Edit Standup Report</DialogTitle>
+            </DialogHeader>
+            <StandupForm onSuccess={() => setOpen(false)} />
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
   }
 
   return (
@@ -75,14 +93,15 @@ export function DialogDemo() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button 
-            className="fixed bottom-6 right-6 rounded-full p-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg z-10"
+            className="fixed bottom-6 right-6 rounded-full p-4 btn btn-primary shadow-lg z-10 gap-2"
           >
             <Plus className="h-6 w-6" />
+            <span className="hidden sm:inline">New Standup</span>
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-gray-900">Daily Standup Report</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-foreground">Daily Standup Report</DialogTitle>
           </DialogHeader>
           <StandupForm onSuccess={() => setOpen(false)} />
         </DialogContent>
