@@ -13,7 +13,7 @@ import {
 import StandupForm from '@/components/StandupForm';
 import { Plus, CalendarCheck } from "lucide-react";
 
-export function DialogDemo() {
+export function StandupDialog() {
   const [open, setOpen] = useState(false);
   const [hasEntry, setHasEntry] = useState(false);
   const [loading, setLoading] = useState(true);

@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import StandupList from '@/components/StandupList';
 import LandingPage from '@/components/LandingPage';
-import { DialogDemo } from "@/components/DialogDemo";
+import { StandupDialog } from "@/components/StandupDialog";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -15,7 +15,7 @@ export default async function Home() {
     <div className="h-full bg-background flex flex-col">
       <div className="container mx-auto px-4 py-4 flex-shrink-0">
         <div className="flex justify-center">
-          <DialogDemo />
+          <StandupDialog />
         </div>
       </div>
       
