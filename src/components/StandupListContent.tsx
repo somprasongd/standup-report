@@ -43,12 +43,6 @@ export default function StandupListContent({ selectedDate, refreshFlag = false }
   const { data: session } = useSession();
   const router = useRouter();
 
-  // Function to trigger refresh
-  const triggerRefresh = () => {
-    // This will be handled by the parent component
-    window.dispatchEvent(new CustomEvent('standupEntryUpdated'));
-  };
-
   // Load view mode preference from localStorage on component mount
   useEffect(() => {
     const savedViewMode = localStorage.getItem('standupViewMode');
