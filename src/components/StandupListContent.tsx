@@ -34,19 +34,19 @@ type StandupEntry = {
   } | null;
 };
 
-export default function StandupListContent({ selectedDate }: { selectedDate: Date }) {
+export default function StandupListContent({ selectedDate, refreshFlag = false }: { selectedDate: Date, refreshFlag?: boolean }) {
   const [entries, setEntries] = useState<StandupEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingEntry, setEditingEntry] = useState<StandupEntry | null>(null);
-  const [refreshFlag, setRefreshFlag] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'kanban'>('grid');
   const { data: session } = useSession();
   const router = useRouter();
 
   // Function to trigger refresh
   const triggerRefresh = () => {
-    setRefreshFlag(prev => !prev);
+    // This will be handled by the parent component
+    window.dispatchEvent(new CustomEvent('standupEntryUpdated'));
   };
 
   // Load view mode preference from localStorage on component mount

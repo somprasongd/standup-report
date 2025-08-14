@@ -143,7 +143,7 @@ export default function StandupList() {
         </h3>
       </div>
       <div className="flex-grow overflow-hidden">
-        <StandupListContent selectedDate={selectedDate} key={`${selectedDate.getTime()}-${refreshFlag}`} />
+        <StandupListContent selectedDate={selectedDate} refreshFlag={refreshFlag} />
       </div>
     </div>
   );
