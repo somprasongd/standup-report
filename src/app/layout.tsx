@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { DialogProvider } from "@/components/ui/dialog-context";
 
 const geistSans = Geist({
@@ -32,12 +33,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <AuthProvider session={session}>
           <DialogProvider>
             <Navbar />
-            <main>{children}</main>
+            <main className="flex-grow">{children}</main>
+            <Footer />
           </DialogProvider>
         </AuthProvider>
       </body>
