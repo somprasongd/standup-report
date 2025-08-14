@@ -28,7 +28,17 @@ The application uses Google Workspace authentication, restricted to users with t
 
 2. **Standup Form**: Authenticated users can submit their daily standup reports with fields for yesterday's work, today's plans, and blockers.
 
-3. **Standup List**: View recent standup entries from team members.
+3. **Standup List**: View recent standup entries from team members with two viewing modes:
+   - **Grid View**: Traditional card-based layout with scrollable content
+   - **Kanban View**: Board-based layout with separate scrollbars for each column
+
+## Recent Improvements
+
+- **Responsive Layout**: The application now uses a full-height layout that properly fits the viewport without browser scrollbars
+- **Scrollable Components**: 
+  - Grid view has scrollable content area
+  - Kanban view has separate scrollbars for each board column
+- **Footer Visibility**: The footer is always visible without requiring page scrolling
 
 ## Development Setup
 
@@ -60,6 +70,7 @@ The application uses Prisma with the following models:
 ## Components
 
 - `StandupForm`: Form for submitting standup reports
-- `StandupList`: Displays recent standup entries
+- `StandupList`: Displays recent standup entries with view mode toggle
+- `StandupListContent`: Core component for rendering standup entries in different layouts
 - `Navbar`: Navigation bar with authentication controls
 - `AuthProvider`: NextAuth.js provider wrapper
