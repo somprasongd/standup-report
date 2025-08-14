@@ -352,7 +352,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Yesterday Column */}
-        <div className="bg-secondary rounded-lg p-4">
+        <div className="bg-secondary rounded-lg p-4 flex flex-col">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="h-5 w-5 text-primary" />
             <h3 className="font-bold text-lg text-foreground">Yesterday</h3>
@@ -360,7 +360,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
               {entries.length}
             </span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto flex-grow" style={{ maxHeight: 'calc(100vh - 200px)' }}>
             {entries.map((entry) => (
               <div key={`yesterday-${entry.id}`} className="card p-4">
                 <div className="flex items-center mb-2">
@@ -394,7 +394,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
         </div>
 
         {/* Today Column */}
-        <div className="bg-secondary rounded-lg p-4">
+        <div className="bg-secondary rounded-lg p-4 flex flex-col">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="h-5 w-5 text-primary" />
             <h3 className="font-bold text-lg text-foreground">Today</h3>
@@ -402,7 +402,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
               {entries.length}
             </span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto flex-grow" style={{ maxHeight: 'calc(100vh - 200px)' }}>
             {entries.map((entry) => (
               <div key={`today-${entry.id}`} className="card p-4">
                 <div className="flex items-center mb-2">
@@ -436,7 +436,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
         </div>
 
         {/* Blockers Column */}
-        <div className="bg-secondary rounded-lg p-4">
+        <div className="bg-secondary rounded-lg p-4 flex flex-col">
           <div className="flex items-center gap-2 mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -446,7 +446,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
               {entries.filter(e => e.blockers).length}
             </span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto flex-grow" style={{ maxHeight: 'calc(100vh - 200px)' }}>
             {entries.filter(e => e.blockers).map((entry) => (
               <div key={`blockers-${entry.id}`} className="card p-4">
                 <div className="flex items-center mb-2">
