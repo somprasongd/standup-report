@@ -579,33 +579,7 @@ export default function StandupListContent({ selectedDate }: { selectedDate: Dat
                 )}
               </div>
               
-              {canEditEntry(entry) && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleEdit(entry)}
-                        className="gap-1 text-xs"
-                      >
-                        <Edit3 className="h-3 w-3" />
-                        Edit
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
-                      <DialogHeader>
-                        <DialogTitle className="text-2xl font-bold text-foreground">Edit Standup Report</DialogTitle>
-                      </DialogHeader>
-                      <EditStandupForm 
-                        entry={editingEntry} 
-                        onDelete={triggerRefresh} 
-                        onUpdate={triggerRefresh} 
-                      />
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              )}
+              {/* Edit button removed from grid view as per requirement */}
             </div>
           ))}
         </div>
