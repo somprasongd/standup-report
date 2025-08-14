@@ -27,6 +27,7 @@ The application uses Google Workspace authentication, restricted to users with t
 1. **Google Workspace Authentication**: Users can sign in with their Google accounts, but only those with @hospital-os.com email addresses can access the application.
 
 2. **Standup Form**: Authenticated users can submit their daily standup reports with fields for yesterday's work, today's plans, and blockers.
+   - **Edit/Delete Functionality**: Users can edit or delete their existing standup entries
 
 3. **Standup List**: View recent standup entries from team members with two viewing modes:
    - **Grid View**: Traditional card-based layout with scrollable content
@@ -35,10 +36,11 @@ The application uses Google Workspace authentication, restricted to users with t
 ## Recent Improvements
 
 - **Responsive Layout**: The application now uses a full-height layout that properly fits the viewport without browser scrollbars
-- **Scrollable Components**: 
+- **Scrollable Components**:
   - Grid view has scrollable content area
   - Kanban view has separate scrollbars for each board column
 - **Footer Visibility**: The footer is always visible without requiring page scrolling
+- **Code Quality**: Removed unused code and dependencies for better maintainability
 
 ## Development Setup
 
@@ -69,7 +71,7 @@ The application uses Prisma with the following models:
 
 ## Components
 
-- `StandupForm`: Form for submitting standup reports
+- `StandupForm`: Form for submitting standup reports with edit/delete functionality
 - `StandupList`: Displays recent standup entries with view mode toggle
 - `StandupListContent`: Core component for rendering standup entries in different layouts
 - `Navbar`: Navigation bar with authentication controls
