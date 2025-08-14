@@ -74,7 +74,7 @@ export function StandupDialog() {
           onClick={() => setOpen(true)}
         >
           <CalendarCheck className="h-6 w-6" />
-          <span className="hidden sm:inline">Edit Today's Entry</span>
+          <span className="hidden sm:inline">Edit Today&apos;s Entry</span>
         </Button>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background">
