@@ -86,8 +86,8 @@ export default function StandupList() {
   };
 
   return (
-    <div className="card p-6 mb-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+    <div className="card p-6 mb-4 flex flex-col h-full">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4 flex-shrink-0">
         <h2 className="text-2xl font-bold text-foreground">Standup Entries</h2>
         <div className="flex items-center gap-2">
           <button 
@@ -137,12 +137,14 @@ export default function StandupList() {
         </div>
       )}
       
-      <div className="mb-2">
+      <div className="mb-2 flex-shrink-0">
         <h3 className="text-lg font-semibold text-foreground/90">
           {formatDateLabel(selectedDate)}
         </h3>
       </div>
-      <StandupListContent selectedDate={selectedDate} key={`${selectedDate.getTime()}-${refreshFlag}`} />
+      <div className="flex-grow overflow-hidden">
+        <StandupListContent selectedDate={selectedDate} key={`${selectedDate.getTime()}-${refreshFlag}`} />
+      </div>
     </div>
   );
 }

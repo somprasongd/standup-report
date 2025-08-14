@@ -12,15 +12,15 @@ export default async function Home() {
   }
   
   return (
-    <div className="min-h-screen bg-background py-4 sm:py-6">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-center mb-4">
+    <div className="h-full bg-background flex flex-col">
+      <div className="container mx-auto px-4 py-4 flex-shrink-0">
+        <div className="flex justify-center">
           <DialogDemo />
         </div>
-        
-        <div className="w-full">
-          <StandupList />
-        </div>
+      </div>
+      
+      <div className="flex-grow overflow-hidden px-4 pb-4">
+        <StandupList />
       </div>
     </div>
   );
