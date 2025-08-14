@@ -115,6 +115,37 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!existingEntry) return;
+    
+    const confirmDelete = window.confirm("Are you sure you want to delete this standup entry? This action cannot be undone.");
+    if (!confirmDelete) return;
+    
+    try {
+      const response = await fetch(`/api/standup/${existingEntry.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete standup entry');
+      }
+      
+      // Reset form and close dialog
+      setYesterday('');
+      setToday('');
+      setBlockers('');
+      setExistingEntry(null);
+      
+      // Trigger success callback and refresh
+      if (onSuccess) {
+        onSuccess();
+      }
+      window.dispatchEvent(new CustomEvent('standupEntryUpdated'));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete entry');
+    }
+  };
+
   if (loading) {
     return (
       <div className="bg-background p-6 rounded-lg">
@@ -214,6 +245,16 @@ export default function StandupForm({ onSuccess }: StandupFormProps) {
           >
             Cancel
           </Button>
+          {existingEntry && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isSubmitting}
+            >
+              Delete Entry
+            </Button>
+          )}
           <Button
             type="submit"
             disabled={isSubmitting}
