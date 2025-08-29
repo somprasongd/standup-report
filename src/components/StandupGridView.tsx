@@ -2,7 +2,7 @@
 
 import { format, parseISO } from 'date-fns';
 import MarkdownPreview from '@uiw/react-markdown-preview';
-import { User, Clock } from 'lucide-react';
+import { User, Clock, Folder } from 'lucide-react';
 import { truncateMarkdown } from '@/lib/utils';
 import { useState } from 'react';
 
@@ -155,9 +155,11 @@ export default function StandupGridView({ entries }: StandupGridViewProps) {
                     <h3 className="font-bold text-foreground">
                       {selectedEntry.user?.name || selectedEntry.name}
                     </h3>
-                    <p className="text-sm text-foreground/60">
-                      {format(parseISO(selectedEntry.createdAt), 'MMMM d, yyyy h:mm a')}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-foreground/60">
+                        {format(parseISO(selectedEntry.createdAt), 'MMMM d, yyyy h:mm a')}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 <button 

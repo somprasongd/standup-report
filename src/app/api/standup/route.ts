@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
         yesterday,
         today,
         blockers: blockers || null,
-        userId: (session.user as { id: string }).id,
+        userId: (session.user as { id: string }).id
       },
     });
     
@@ -53,6 +53,8 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    
     // Get the date parameter from the query string
     const { searchParams } = new URL(request.url);
     const dateParam = searchParams.get('date');
@@ -81,14 +83,14 @@ export async function GET(request: NextRequest) {
             name: true,
             image: true,
           }
-        },
+        }
       }
     });
     
     // Transform the data to match the client expectations
     const transformedEntries = entries.map((entry: any) => ({
       ...entry,
-      name: entry.user?.name || 'Anonymous'
+      name: entry.user?.name || 'Anonymous',
     }));
     
     return new Response(

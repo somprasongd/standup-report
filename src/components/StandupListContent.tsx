@@ -9,7 +9,7 @@ import {
 import { useDialog } from '@/components/ui/dialog-context';
 import MarkdownEditor from '@uiw/react-markdown-editor';
 import { format, isToday } from 'date-fns';
-import { Clock } from 'lucide-react';
+import { Clock, Folder } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -329,8 +329,6 @@ export default function StandupListContent({ selectedDate, refreshFlag = false }
       </div>
     );
   }
-
-  
 
   return (
     <div className="flex flex-col h-full">

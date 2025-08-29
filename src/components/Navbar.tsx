@@ -2,20 +2,44 @@
 
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Folder } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
+  const pathname = usePathname();
 
   return (
     <header className="bg-background border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-8">
             <h1 className="text-2xl font-bold text-foreground">
               <span className="text-gradient">Team Standup</span>
             </h1>
+            {session && (
+              <nav className="hidden md:flex space-x-4">
+                <Link 
+                  href="/" 
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                    pathname === "/" ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  Standup
+                </Link>
+                <Link 
+                  href="/projects" 
+                  className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1 ${
+                    pathname === "/projects" ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  <Folder className="h-4 w-4" />
+                  Projects
+                </Link>
+              </nav>
+            )}
           </div>
           <div className="flex items-center">
             {loading ? (

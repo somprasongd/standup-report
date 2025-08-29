@@ -57,7 +57,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         yesterday,
         today,
         blockers: blockers || null,
-        userId: (session.user as { id: string }).id,
+        userId: (session.user as { id: string }).id
       },
     });
     

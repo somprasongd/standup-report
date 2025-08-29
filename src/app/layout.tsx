@@ -7,6 +7,7 @@ import AuthProvider from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { DialogProvider } from "@/components/ui/dialog-context";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default async function RootLayout({
               <Navbar />
               <main className="flex-grow overflow-hidden">{children}</main>
               <Footer />
+              <Toaster />
             </div>
           </DialogProvider>
         </AuthProvider>
