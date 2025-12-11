@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy package.json and package-lock.json (if available)
 COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install dependencies (tolerate peer mismatch from next-auth vs Next 16)
+RUN npm ci --omit=dev --legacy-peer-deps && npm cache clean --force
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -25,7 +25,7 @@ COPY . .
 # ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install dev dependencies needed for build
-RUN npm install --include=dev
+RUN npm install --include=dev --legacy-peer-deps
 
 # Generate Prisma client
 RUN npx prisma generate
