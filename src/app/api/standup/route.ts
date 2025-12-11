@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import prisma, { ensureStandupColumns } from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { startOfDay, endOfDay } from 'date-fns';
@@ -27,6 +27,8 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    await ensureStandupColumns();
+
     // Create new standup entry
     const standupEntry = await prisma.standupEntry.create({
       data: {
@@ -66,6 +68,8 @@ export async function GET(request: NextRequest) {
     const start = startOfDay(targetDate);
     const end = endOfDay(targetDate);
     
+    await ensureStandupColumns();
+
     const entries = await prisma.standupEntry.findMany({
       where: {
         createdAt: {

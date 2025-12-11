@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import prisma, { ensureStandupColumns } from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
@@ -17,6 +17,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // Await the params
     const { id } = await params;
     
+    await ensureStandupColumns();
+
     // Check if the entry exists and belongs to the current user
     const existingEntry = await prisma.standupEntry.findUnique({
       where: { id: parseInt(id) },
@@ -78,6 +80,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
+    await ensureStandupColumns();
     
     if (!session || !session.user || !('id' in session.user)) {
       return new Response(
@@ -109,6 +112,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       );
     }
     
+    await ensureStandupColumns();
+
     // Delete the standup entry
     await prisma.standupEntry.delete({
       where: { id: parseInt(id) },

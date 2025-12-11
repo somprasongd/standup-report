@@ -5,6 +5,7 @@ import MarkdownPreview from '@uiw/react-markdown-preview';
 import { User, Clock, Folder } from 'lucide-react';
 import { truncateMarkdown } from '@/lib/utils';
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface StandupEntry {
   id: number;
@@ -53,10 +54,13 @@ export default function StandupGridView({ entries }: StandupGridViewProps) {
             <div className="flex justify-between items-start mb-3">
               <div className="flex items-center">
                 {entry.user?.image ? (
-                  <img 
-                    src={entry.user.image} 
-                    alt={entry.user.name || 'User'} 
+                  <Image
+                    src={entry.user.image}
+                    alt={entry.user.name || 'User'}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full mr-3 object-cover"
+                    unoptimized
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-secondary mr-3 flex items-center justify-center">
@@ -141,10 +145,13 @@ export default function StandupGridView({ entries }: StandupGridViewProps) {
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3 mb-4">
                   {selectedEntry.user?.image ? (
-                    <img 
-                      src={selectedEntry.user.image} 
-                      alt={selectedEntry.user.name || 'User'} 
+                    <Image
+                      src={selectedEntry.user.image}
+                      alt={selectedEntry.user.name || 'User'}
+                      width={40}
+                      height={40}
                       className="w-10 h-10 rounded-full object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">

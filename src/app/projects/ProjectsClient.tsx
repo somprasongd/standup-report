@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,26 +39,7 @@ export default function ProjectsClient() {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Fetch projects
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  // Filter projects based on search term
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredProjects(projects);
-    } else {
-      const filtered = projects.filter(project => 
-        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-      setFilteredProjects(filtered);
-    }
-  }, [searchTerm, projects]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setIsLoading(true);
       const res = await fetch("/api/projects");
@@ -82,7 +63,26 @@ export default function ProjectsClient() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  // Fetch projects
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  // Filter projects based on search term
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredProjects(projects);
+    } else {
+      const filtered = projects.filter(project => 
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredProjects(filtered);
+    }
+  }, [searchTerm, projects]);
 
   const handleCreateProject = () => {
     setIsEditing(false);

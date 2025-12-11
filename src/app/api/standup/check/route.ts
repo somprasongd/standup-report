@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import prisma from '@/lib/prisma';
+import prisma, { ensureStandupColumns } from '@/lib/prisma';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { startOfDay, endOfDay } from 'date-fns';
@@ -20,6 +20,8 @@ export async function GET(request: NextRequest) {
     const start = startOfDay(today);
     const end = endOfDay(today);
     
+    await ensureStandupColumns();
+
     // Check if user already has an entry for today
     const existingEntry = await prisma.standupEntry.findFirst({
       where: {

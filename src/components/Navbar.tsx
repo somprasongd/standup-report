@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut, User, Folder } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
@@ -48,10 +49,13 @@ export default function Navbar() {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   {session.user?.image ? (
-                    <img 
-                      src={session.user.image} 
-                      alt={session.user.name || "User"} 
+                    <Image
+                      src={session.user.image}
+                      alt={session.user.name || "User"}
+                      width={32}
+                      height={32}
                       className="w-8 h-8 rounded-full object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">

@@ -5,6 +5,7 @@ import MarkdownPreview from '@uiw/react-markdown-preview';
 import { User, Clock, Calendar, Folder } from 'lucide-react';
 import { truncateMarkdown } from '@/lib/utils';
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface StandupEntry {
   id: number;
@@ -97,10 +98,13 @@ export default function StandupKanbanView({ entries }: StandupKanbanViewProps) {
               >
                 <div className="flex items-center mb-2">
                   {entry.user?.image ? (
-                    <img 
-                      src={entry.user.image} 
-                      alt={entry.user.name || 'User'} 
+                    <Image
+                      src={entry.user.image}
+                      alt={entry.user.name || 'User'}
+                      width={24}
+                      height={24}
                       className="w-6 h-6 rounded-full mr-2 object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-background mr-2 flex items-center justify-center">
@@ -146,10 +150,13 @@ export default function StandupKanbanView({ entries }: StandupKanbanViewProps) {
               >
                 <div className="flex items-center mb-2">
                   {entry.user?.image ? (
-                    <img 
-                      src={entry.user.image} 
-                      alt={entry.user.name || 'User'} 
+                    <Image
+                      src={entry.user.image}
+                      alt={entry.user.name || 'User'}
+                      width={24}
+                      height={24}
                       className="w-6 h-6 rounded-full mr-2 object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-background mr-2 flex items-center justify-center">
@@ -197,10 +204,13 @@ export default function StandupKanbanView({ entries }: StandupKanbanViewProps) {
               >
                 <div className="flex items-center mb-2">
                   {entry.user?.image ? (
-                    <img 
-                      src={entry.user.image} 
-                      alt={entry.user.name || 'User'} 
+                    <Image
+                      src={entry.user.image}
+                      alt={entry.user.name || 'User'}
+                      width={24}
+                      height={24}
                       className="w-6 h-6 rounded-full mr-2 object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-background mr-2 flex items-center justify-center">
@@ -237,10 +247,13 @@ export default function StandupKanbanView({ entries }: StandupKanbanViewProps) {
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3 mb-4">
                   {selectedCard.entry.user?.image ? (
-                    <img 
-                      src={selectedCard.entry.user.image} 
-                      alt={selectedCard.entry.user.name || 'User'} 
+                    <Image
+                      src={selectedCard.entry.user.image}
+                      alt={selectedCard.entry.user.name || 'User'}
+                      width={40}
+                      height={40}
                       className="w-10 h-10 rounded-full object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
